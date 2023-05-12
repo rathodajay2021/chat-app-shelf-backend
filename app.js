@@ -22,7 +22,8 @@ server.listen(PORT, () => {
 });
 
 /***************SOCKET IO CONNECTION***************/
-io.on("connection", (socket) => {//start socket.io connection
+io.on("connection", (socket) => {
+  //start socket.io connection
   console.log("🚀 ~ file: app.js:18 ~ socket.id:", socket.id);
 
   //on use join start this
@@ -31,12 +32,18 @@ io.on("connection", (socket) => {//start socket.io connection
     console.log("🚀 ~ file: app.js:30 ~ socket.on ~ user:", user, error);
 
     if (error) return callback(error);
-    //create a room in socket.io 
+    //create a room in socket.io
     socket.join(chatRoomName.trim().toLowerCase());
     //send welcome message for joining the room
-    socket.emit("chatMessage", `Welcome ${userName} to ${chatRoomName} room`);
+    socket.emit("chatMessage", {
+      user: "Admin",
+      text: `Welcome ${userName} to ${chatRoomName} room`,
+    });
     //broadcast all other user that new user joined
-    socket.broadcast.emit("chatMessage", `${userName} has joined`);
+    socket.broadcast.emit("chatMessage", {
+      user: "Admin",
+      text: `${userName} has joined`,
+    });
   });
 
   socket.on("disconnect", () => {
