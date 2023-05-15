@@ -17,6 +17,10 @@ const addUser = ({ id, userName, chatRoomName }) => {
   return { user };
 };
 
+const getUser = (id) => {
+  return 
+}
+
 const removeUser = (id) => {
   const index = userArray.findIndex((user) => user.id === id);
 
@@ -25,5 +29,6 @@ const removeUser = (id) => {
 
 module.exports = {
   addUser,
+  getUser,
   removeUser,
 };

@@ -12,7 +12,7 @@ const server = http.createServer(app);
 const io = socketIo(server);
 app.use(cors());
 app.use(actuator({ infoGitMode: "full" }));
-const { addUser, removeUser } = require("./Socket.controller");
+const { addUser, getUser, removeUser } = require("./Socket.controller");
 
 /***************START SERVER***************/
 server.listen(PORT, () => {
@@ -43,6 +43,14 @@ io.on("connection", (socket) => {
     socket.broadcast.emit("chatMessage", {
       user: "Admin",
       text: `${userName} has joined`,
+    });
+  });
+
+  socket.on("user-msg", (message, callback) => {
+    const user = console.log("🚀 ~ file: app.js:51 ~ socket.on ~ user:", user);
+    socket.broadcast.emit("chatMessage", {
+      user: "userName",
+      text: message,
     });
   });
 
