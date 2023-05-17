@@ -24,12 +24,11 @@ server.listen(PORT, () => {
 /***************SOCKET IO CONNECTION***************/
 io.on("connection", (socket) => {
   //start socket.io connection
-  console.log("🚀 ~ file: app.js:18 ~ socket.id:", socket.id);
+  console.log(socket.handshake.auth.offset);
 
   //on use join start this
   socket.on("join-room", ({ userName, chatRoomName }, callback) => {
     const { error, user } = addUser({ id: socket.id, userName, chatRoomName });
-    console.log("🚀 ~ file: app.js:30 ~ socket.on ~ user:", user, error);
 
     if (error) return callback(error);
     //create a room in socket.io
@@ -47,16 +46,35 @@ io.on("connection", (socket) => {
   });
 
   socket.on("user-msg", (message, callback) => {
-    const user = console.log("🚀 ~ file: app.js:51 ~ socket.on ~ user:", user);
-    socket.broadcast.emit("chatMessage", {
-      user: "userName",
+    const users = getUser(socket.id);
+
+    //send everyone user msg
+    io.to(users?.room).emit("chatMessage", {
+      user: users?.name,
       text: message,
     });
+    // socket.broadcast.emit("chatMessage", {
+    //   user: users?.name,
+    //   text: message,
+    // });
+
+    // socket.emit("chatMessage", {
+    //   user: "you",
+    //   text: message,
+    // });
   });
 
   socket.on("disconnect", () => {
+    //on disconnect remove the user from dataTable
     const removedUser = removeUser(socket.id);
-    console.log("🚀 ~ file: app.js:35 ~ socket.on ~ removedUser:", removedUser);
+    // console.log("🚀 ~ file: app.js:35 ~ socket.on ~ removedUser:", removedUser);
+    if (removedUser) {
+      //send everyone msg that user is left the chat
+      io.to(removedUser.room).emit("chatMessage", {
+        user: "Admin",
+        text: `${removedUser.name} has left the chat.`,
+      });
+    }
   });
 });
 

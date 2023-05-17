@@ -18,8 +18,8 @@ const addUser = ({ id, userName, chatRoomName }) => {
 };
 
 const getUser = (id) => {
-  return 
-}
+  return userArray.find((user) => user.id === id);
+};
 
 const removeUser = (id) => {
   const index = userArray.findIndex((user) => user.id === id);
